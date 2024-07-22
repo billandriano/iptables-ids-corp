@@ -1,0 +1,24 @@
+# $Id: local.rules,v 1.11 2004/07/23 20:15:44 bmc Exp $
+# ----------------
+# LOCAL RULES
+# ----------------
+# This file intentionally does not come with signatures.  Put your local
+# additions here.
+
+alert icmp any any -> any any (msg: "ICMP Packet found"; sid:10000004;)
+
+alert tcp any any -> any 21 (msg:"Incoming FTP connection"; flags:S; sid:10000010;)
+
+alert tcp any any -> any 21 (msg:"FTP Brute Force Attack"; flow:to_server,established; content:"PASS "; nocase; threshold: type threshold, track by_src, count 2, seconds 60; sid:1000001; rev:1;)
+
+#drop  tcp any any -> any 21 (msg:"FTP Brute Force Dropped"; flow:to_server,established; content:"PASS "; nocase; threshold: type threshold, track by_src, count 2, seconds 60; sid:1000002; rev:1;)
+
+block  tcp any any -> any 21 (msg:"FTP Brute Force Blocked"; flow:to_server,established; content:"PASS "; nocase; threshold: type threshold, track by_src, count 2, seconds 60; sid:1000003; rev:1;)
+
+#alert tcp any any -> any 443 (flags: S; msg:"Possible DoS Attack	Type : SYNflood"; flow:stateless; sid:1000004;  detection_filter:track by_dst, count 20, seconds 10;)
+
+#drop tcp any any -> any 80 (flags: S; msg:"Possible DoS Attack Dropped : SYNflood"; flow:stateless; sid:1000005;  detection_filter:track by_dst, count 20, seconds 10;)
+
+reject tcp any any -> any 443 (flags: S; msg:"Possible DoS Attack Blocked : SYNflood"; flow:stateless; sid:1000006;  detection_filter:track by_dst, count 20, seconds 10;)
+
+#alert tcp any any -> any 443 (msg:"Connection with xampp website"; sid:10000003;)
